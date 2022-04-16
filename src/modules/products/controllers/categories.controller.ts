@@ -9,10 +9,12 @@ import {
   Body,
   ParseIntPipe,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoryDto, UpdateCategoryDto } from '../dtos/categories.dtos';
 
+@ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}

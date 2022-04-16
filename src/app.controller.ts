@@ -19,4 +19,9 @@ export class AppController {
   getDb() {
     return this.appService.getDatabaseConnection();
   }
+
+  @Get('env')
+  getEnv() {
+    return this.appService.getEnv();
+  }
 }

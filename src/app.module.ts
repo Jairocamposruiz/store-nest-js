@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { HttpModule, HttpService } from '@nestjs/axios'; //Solo para prueba
 import { firstValueFrom } from 'rxjs'; //Solo para prueba
+import * as Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { ProductsModule } from './modules/products/products.module';
 import { DatabaseModule } from './modules/common/database/database.module';
+
+import { environments } from './environments';
+import config from './config';
 
 //Pruebas con inyección de dependencias
 const API_KEY = '123456';
@@ -16,6 +21,17 @@ const API_KEY_PROD = 'PROD_123456';
   imports: [
     UsersModule,
     ProductsModule,
+    ConfigModule.forRoot({
+      //Módulo que lee las variables de entorno, solo con esto ya lo podemos usar en cualquier parte
+      envFilePath: environments[process.env.NODE_ENV] || '.dev.env',
+      load: [config],
+      isGlobal: true,
+      validationSchema: Joi.object({
+        API_KEY: Joi.string().required(),
+        DATABASE_NAME: Joi.string().required(),
+        DATABASE_PORT: Joi.number().required(),
+      }),
+    }),
     HttpModule.registerAsync({
       useFactory: () => ({
         timeout: 1000,

@@ -25,9 +25,9 @@ services:
 
   mysql:
     image: mysql:5
+    platform: linux/x86_64
     environment:
       - MYSQL_DATABASE=my_db
-      - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=123456
     ports:
       - '3306:3306'
@@ -35,11 +35,11 @@ services:
       - ./data/mysql_data:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin
     ports:
       - '8080:80'
     depends_on:
       - mysql
     environment:
       - MYSQL_ROOT_PASSWORD=123456
-      - PMA=mysql
+      - PMA_HOST=mysql

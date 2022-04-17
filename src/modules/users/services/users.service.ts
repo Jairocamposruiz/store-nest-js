@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Client } from 'pg';
 
 import { Order } from '../entities/order.entity';
 import { User } from '../entities/user.entity';

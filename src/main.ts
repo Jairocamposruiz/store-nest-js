@@ -1,19 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  //Validación de DTOs
+  //Validation DTOs
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, //Ignora los atributos no especificados en el DTO
-      forbidNonWhitelisted: true, //Alerta de los atributos no especificados en el DTO
+      whitelist: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
-  //Documentación de la API
+  //Swagger documentation
   const config = new DocumentBuilder()
     .setTitle('Store API')
     .setDescription('Example of API with NestJS')
@@ -22,7 +23,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  //Habilitar CORS
+  //Cors
   app.enableCors();
 
   await app.listen(process.env.PORT || 3000);

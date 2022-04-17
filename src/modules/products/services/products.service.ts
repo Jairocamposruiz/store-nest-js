@@ -1,77 +1,71 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { Product } from '../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
 
 @Injectable()
 export class ProductsService {
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Product 1',
-      description: 'Description 1',
-      price: 100,
-      stock: 10,
-      image: 'https://via.placeholder.com/150',
-    },
-    {
-      id: 2,
-      name: 'Product 2',
-      description: 'Description 2',
-      price: 200,
-      stock: 10,
-      image: 'https://via.placeholder.com/150',
-    },
-    {
-      id: 3,
-      name: 'Product 3',
-      description: 'Description 3',
-      price: 300,
-      stock: 10,
-      image: 'https://via.placeholder.com/150',
-    },
-  ];
+  constructor(
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+  ) {}
 
-  findAll(): Product[] {
-    return this.products;
+  async findAll() {
+    return await this.productRepository.find();
   }
 
-  findOne(id: number): Product {
-    const product = this.products.find((product) => product.id === id);
+  async findOne(id: number) {
+    const product = await this.productRepository.findOne(id);
     if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
     return product;
   }
 
-  create(payload: CreateProductDto): Product {
-    const newProduct = {
-      id: this.products.length + 1,
-      ...payload,
-    };
-    this.products.push(newProduct);
-    return newProduct;
+  async create(payload: CreateProductDto) {
+    if (await this.existName(payload.name)) {
+      throw new BadRequestException(
+        `Product with name ${payload.name} already exist`,
+      );
+    }
+    const newProduct = this.productRepository.create(payload);
+    return await this.productRepository.save(newProduct);
   }
 
-  update(id: number, payload: UpdateProductDto): Product {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index === -1) {
+  async update(id: number, payload: UpdateProductDto) {
+    const product = await this.productRepository.findOne(id);
+    if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
-    this.products[index] = {
-      ...this.products[index],
-      ...payload,
-    };
-    return this.products[index];
+    if (payload.name && product.name !== payload.name) {
+      if (await this.existName(payload.name)) {
+        throw new BadRequestException(
+          `Product with name ${payload.name} already exist`,
+        );
+      }
+    }
+    this.productRepository.merge(product, payload);
+    return await this.productRepository.save(product);
   }
 
-  delete(id: number): Product {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index === -1) {
+  async delete(id: number) {
+    const product = await this.productRepository.findOne(id);
+    if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
-    const deletedProduct = this.products[index];
-    this.products.splice(index, 1);
-    return deletedProduct;
+    return await this.productRepository.remove(product);
+  }
+
+  private async existName(name: string) {
+    const existName = await this.productRepository.findOne({
+      where: { name: name },
+    });
+    return !!existName;
   }
 }

@@ -1,6 +1,8 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 
 import { BaseEntity } from '../../common/entities/base.entity';
+import { Brand } from './brand.entity';
+import { Category } from './category.entity';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -18,4 +20,11 @@ export class Product extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255 })
   image: string;
+
+  @ManyToOne(() => Brand, (brand) => brand.products)
+  brand: Brand;
+
+  @ManyToMany(() => Category, (category) => category.products)
+  @JoinTable()
+  categories: Category[];
 }

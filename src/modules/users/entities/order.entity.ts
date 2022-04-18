@@ -1,17 +1,14 @@
-import { Column, Entity } from 'typeorm';
+import { ManyToOne, OneToMany, Entity } from 'typeorm';
 
 import { BaseEntity } from '../../common/entities/base.entity';
-import { User } from './user.entity';
-import { Product } from '../../products/entities/product.entity';
+import { Customer } from './customer.entity';
+import { OrderItem } from './orderItem.entity';
 
 @Entity()
 export class Order extends BaseEntity {
-  @Column({ type: 'date' })
-  date: Date;
+  @ManyToOne(() => Customer, (customer) => customer.orders)
+  customer: Customer;
 
-  @Column() //TODO: change type
-  user: string;
-
-  @Column() //TODO: change type
-  products: string;
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
+  orderItems: OrderItem[];
 }

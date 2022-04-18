@@ -25,16 +25,19 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @ApiOperation({ summary: 'Get product by Id' })
   @Get(':id')
   getOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
 
+  @ApiOperation({ summary: 'Create a new product' })
   @Post()
   create(@Body() payload: CreateProductDto) {
     return this.productsService.create(payload);
   }
 
+  @ApiOperation({ summary: 'Update a product' })
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -43,8 +46,27 @@ export class ProductsController {
     return this.productsService.update(id, payload);
   }
 
+  @ApiOperation({ summary: 'Delete a product' })
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.delete(id);
+  }
+
+  @ApiOperation({ summary: 'Remove category to product' })
+  @Delete(':productId/categories/:categoryId')
+  removeCategory(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    return this.productsService.removeCategoryToProduct(productId, categoryId);
+  }
+
+  @ApiOperation({ summary: 'Add category to product' })
+  @Put(':productId/categories/:categoryId')
+  addCategory(
+    @Param('productId', ParseIntPipe) productId: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    return this.productsService.addCategoryToProduct(productId, categoryId);
   }
 }

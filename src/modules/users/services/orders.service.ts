@@ -20,7 +20,9 @@ export class OrdersService {
   }
 
   async findOne(id: number) {
-    const order = await this.orderRepository.findOne(id);
+    const order = await this.orderRepository.findOne(id, {
+      relations: ['customer', 'orderItems', 'orderItems.product'], //Relación de segundo nivel
+    });
     if (!order) {
       throw new NotFoundException(`Order with ID "${id}" not found`);
     }

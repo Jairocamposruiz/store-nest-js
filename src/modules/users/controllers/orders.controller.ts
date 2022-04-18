@@ -5,7 +5,6 @@ import {
   Put,
   Delete,
   Param,
-  Query,
   Body,
   ParseIntPipe,
 } from '@nestjs/common';

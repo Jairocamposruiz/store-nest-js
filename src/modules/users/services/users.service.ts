@@ -6,11 +6,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Order } from '../entities/order.entity';
 import { User } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/users.dtos';
 import { CustomersService } from './customers.service';
-import { ProductsService } from '../../products/services/products.service';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +16,6 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly customersService: CustomersService,
-    private readonly productsService: ProductsService,
   ) {}
 
   async findAll() {
@@ -84,7 +81,6 @@ export class UsersService {
 
   async getOrdersByUser(id: number) {
     //TODO: implement
-    await this.productsService.findAll();
     return;
   }
 

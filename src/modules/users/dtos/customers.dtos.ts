@@ -5,17 +5,17 @@ export class CreateCustomerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  readonly name: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  lastName: string;
+  readonly lastName: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsPhoneNumber('ES')
-  phone: string;
+  readonly phone: string;
 }
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {}

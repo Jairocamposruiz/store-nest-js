@@ -5,7 +5,7 @@ export class CreateCategoryDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  name: string;
+  readonly name: string;
 }
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}

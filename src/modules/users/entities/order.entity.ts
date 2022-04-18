@@ -1,19 +1,17 @@
-import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
+import { BaseEntity } from '../../common/entities/base.entity';
 import { User } from './user.entity';
 import { Product } from '../../products/entities/product.entity';
 
 @Entity()
-export class Order {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Order extends BaseEntity {
   @Column({ type: 'date' })
   date: Date;
 
-  @Column()
-  user: User;
+  @Column() //TODO: change type
+  user: string;
 
-  @Column()
-  products: Product[];
+  @Column() //TODO: change type
+  products: string;
 }

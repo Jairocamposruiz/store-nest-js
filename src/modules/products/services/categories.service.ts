@@ -1,27 +1,71 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { Category } from '../entities/category.entity';
 import { CreateCategoryDto, UpdateCategoryDto } from '../dtos/categories.dtos';
 
 @Injectable()
 export class CategoriesService {
-  findAll(): Category[] {
-    return;
+  constructor(
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
+  ) {}
+
+  async findAll() {
+    return await this.categoryRepository.find();
   }
 
-  findOne(id: number): Category {
-    return;
+  async findOne(id: number) {
+    const category = await this.categoryRepository.findOne(id);
+    if (!category) {
+      throw new NotFoundException(`Category with id ${id} not found`);
+    }
+    return category;
   }
 
-  create(payload: CreateCategoryDto): Category {
-    return;
+  async create(payload: CreateCategoryDto) {
+    if (await this.existName(payload.name)) {
+      throw new BadRequestException(
+        `Category with name ${payload.name} already exists`,
+      );
+    }
+    const newCategory = this.categoryRepository.create(payload);
+    return await this.categoryRepository.save(newCategory);
   }
 
-  update(id: number, payload: UpdateCategoryDto): Category {
-    return;
+  async update(id: number, payload: UpdateCategoryDto) {
+    const category = await this.categoryRepository.findOne(id);
+    if (!category) {
+      throw new NotFoundException(`Category with id ${id} not found`);
+    }
+    if (payload.name && category.name !== payload.name) {
+      if (await this.existName(payload.name)) {
+        throw new BadRequestException(
+          `Category with name ${payload.name} already exists`,
+        );
+      }
+    }
+    this.categoryRepository.merge(category, payload);
+    return await this.categoryRepository.save(category);
   }
 
-  delete(id: number): Category {
-    return;
+  async delete(id: number) {
+    const category = await this.categoryRepository.findOne(id);
+    if (!category) {
+      throw new NotFoundException(`Category with id ${id} not found`);
+    }
+    return await this.categoryRepository.remove(category);
+  }
+
+  private async existName(name: string) {
+    const existName = await this.categoryRepository.findOne({
+      where: { name },
+    });
+    return !!existName;
   }
 }

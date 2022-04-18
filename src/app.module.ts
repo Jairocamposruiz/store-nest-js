@@ -16,7 +16,7 @@ import { configSchema } from './configSchema';
     UsersModule,
     ProductsModule,
     ConfigModule.forRoot({
-      envFilePath: environments[process.env.NODE_ENV] || '.dev.env',
+      envFilePath: environments[process.env.NODE_ENV] || '.env',
       load: [config],
       isGlobal: true,
       validationSchema: configSchema,

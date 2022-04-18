@@ -1,42 +1,25 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a href="https://blog.jcoder.es/" target="blank"><img src="https://jcoderbucket.s3.eu-west-2.amazonaws.com/Logo/logo512.png" width="200" alt="JCodeR Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Descripción
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Ejemplo de un RestServer con NestJS y TypeScript más info sobre proyectos en [JCodeR.es](https://blog.jcoder.es).
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
+## Instalación
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+## Corriendo la aplicación
 
 ```bash
 # development
 $ npm run start
+
+# staging
+$ npm run start:stag
 
 # watch mode
 $ npm run start:dev
@@ -58,16 +41,67 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Bases de datos
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Configuración docker
 
-## Stay in touch
+En el archivo de configuración de docker compose se encuentran las dos bases de datos para las que está configurado
+el proyecto, junto con el manejador de cada una de ellas.
+Se puede añadir la que se necesite sin hacer modificaciones al proyecto siempre que la soporte TypeORM.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Una vez elegida cual queremos hay que añadir una carpeta donde se monta el volumen de docker con la base de datos
+para que esta tenga persistencia. En caso de elegir postgres ./data/postgres_data y en caso de elegir mysql ./data/mysql_data.
+Si queremos que esta no tenga persistencia o cambiar el origen de la carpeta se puede hacer desde el **docker-compose.yml**.
 
-## License
+```
+volumes:
+  - ./data/mysql_data:/var/lib/mysql
+```
 
-Nest is [MIT licensed](LICENSE).
+### Variables de entorno
+
+En el archivo .env.example pueden ver las variables de entorno que se deben configurar para que funcione el proyecto.
+
+### Configuración TypeORM
+
+En el archivo **/src/modules/common/database/database.module.ts** se encuentra toda la configuración de la base de datos.
+Dentro de este veremos el objeto de configuración de TypeORM donde tendremos que indicar la base de datos que usaremos,
+por defecto está **postgres**.
+
+```
+    type: 'postgres',
+```
+
+En el objeto de configuración también tenemos la posibilidad de activar las migraciones automáticas de la base de datos,
+para ello se deben añadir los siguientes parámetros:
+
+```
+    synchronize: true,
+```
+No se recomienda activar las migraciones automáticas en producción, ya que puede generar errores de integridad de datos.
+Aunque es muy útil en desarrollo si estamos modificando continuamente nuestras entidades.
+
+### Migraciones
+
+Este proyecto tiene implementado un sistema de migraciones para la base de datos, con los siguientes comandos podemos
+ejecutar dichas migraciones:
+
+```bash
+# Generar una nueva migración
+$ npm run migrations:generate -- <nombre_migracion>
+
+# Correr la ultima migración
+$ npm run migrations:run
+
+# Mostrar datos de las migraciones
+$ npm run migrations:show
+
+# Borrar todos los datos de la base de datos ¡¡¡Peligroso!!!
+$ npm run migrations:drop
+```
+
+## Datos sobre el autor
+
+- Autor - Jairo Campos Ruiz
+- Website - [JCodeR.es](https://jcoder.es)
+- Blog - [Blog.JCodeR.es](https://blog.jcoder.es)

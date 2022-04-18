@@ -64,7 +64,7 @@ export class ProductsService {
 
   private async existName(name: string) {
     const existName = await this.productRepository.findOne({
-      where: { name: name },
+      where: { name },
     });
     return !!existName;
   }

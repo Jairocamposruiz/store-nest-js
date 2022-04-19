@@ -4,12 +4,23 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {
+  Repository,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Between,
+  FindConditions,
+  FindManyOptions,
+} from 'typeorm';
 
 import { Product } from '../entities/product.entity';
 import { Brand } from '../entities/brand.entity';
 import { Category } from '../entities/category.entity';
-import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
+import {
+  CreateProductDto,
+  UpdateProductDto,
+  FilterProductsDto,
+} from '../dtos/products.dtos';
 
 @Injectable()
 export class ProductsService {
@@ -22,8 +33,28 @@ export class ProductsService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async findAll() {
-    return await this.productRepository.find();
+  async findAll(params?: FilterProductsDto) {
+    const { limit, offset, maxPrice, minPrice, orderBy, order, brandId } =
+      params;
+    const findOptions: FindManyOptions<Product> = {};
+
+    const where: FindConditions<Product> = {};
+    if (minPrice && maxPrice) {
+      where.price = Between(minPrice, maxPrice);
+    } else if (minPrice) {
+      where.price = MoreThanOrEqual(minPrice);
+    } else if (maxPrice) {
+      where.price = LessThanOrEqual(maxPrice);
+    }
+
+    if (brandId) where.brand = { id: brandId };
+    if (orderBy && order) findOptions.order = { [orderBy]: order };
+    findOptions.where = where;
+    findOptions.skip = offset;
+    findOptions.take = limit;
+    findOptions.relations = ['brand', 'categories'];
+
+    return await this.productRepository.find(findOptions);
   }
 
   async findOne(id: number) {

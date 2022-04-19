@@ -4,12 +4,12 @@ import { BaseEntity } from '../../common/entities/base.entity';
 import { Order } from './order.entity';
 import { User } from './user.entity';
 
-@Entity()
+@Entity({ name: 'customers' })
 export class Customer extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'last_name', type: 'varchar', length: 255 })
   lastName: string;
 
   @Column({ type: 'varchar', length: 20 })

@@ -6,8 +6,14 @@ import {
   IsPositive,
   IsArray,
   ArrayMinSize,
+  IsOptional,
+  ValidateIf,
+  Min,
+  IsEnum,
 } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+
+import { BaseFilterDto } from '../../common/dtos/base.filter.dto';
 
 export class CreateProductDto {
   @ApiProperty()
@@ -51,3 +57,30 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
+
+export class FilterProductsDto extends BaseFilterDto {
+  @ApiProperty()
+  @IsOptional()
+  @Min(0)
+  readonly minPrice: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsPositive()
+  readonly maxPrice: number;
+
+  @ApiProperty({ enum: ['price', 'id'] })
+  @ValidateIf((item) => item.order)
+  @IsEnum(['price', 'id'])
+  readonly orderBy: string;
+
+  @ApiProperty({ enum: ['ASC', 'DESC'] })
+  @ValidateIf((item) => item.orderBy)
+  @IsEnum(['ASC', 'DESC'])
+  readonly order: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  readonly brandId: number;
+}

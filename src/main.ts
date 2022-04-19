@@ -1,5 +1,5 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
@@ -11,8 +11,15 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transformOptions: {
+        //Si los query params son números válidos los transforma a números, sino los mantiene como strings
+        enableImplicitConversion: true,
+      },
     }),
   );
+
+  //Serialización
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   //Swagger documentation
   const config = new DocumentBuilder()

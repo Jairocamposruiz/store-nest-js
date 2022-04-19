@@ -1,4 +1,4 @@
-import { IsOptional, IsPositive, Min } from 'class-validator';
+import { IsEnum, IsOptional, IsPositive, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseFilterDto {
@@ -11,4 +11,9 @@ export class BaseFilterDto {
   @IsOptional()
   @Min(0)
   readonly offset: number;
+
+  @ApiProperty({ enum: ['ASC', 'DESC'] })
+  @IsOptional()
+  @IsEnum(['ASC', 'DESC'])
+  readonly order: 'ASC' | 'DESC';
 }

@@ -9,34 +9,39 @@ import {
   Body,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { CustomersService } from '../services/customers.service';
-import { CreateCustomerDto, UpdateCustomerDto } from '../dtos/customers.dtos';
+import {
+  CreateCustomerDto,
+  UpdateCustomerDto,
+  FilterCustomerDto,
+} from '../dtos/customers.dtos';
 
 @ApiTags('Customers')
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
+  @ApiOperation({ summary: 'Get all customers' })
   @Get()
-  get(
-    @Query('limit', ParseIntPipe) limit = 100,
-    @Query('offset', ParseIntPipe) offset = 10,
-  ) {
-    return this.customersService.findAll();
+  get(@Query() params: FilterCustomerDto) {
+    return this.customersService.findAll(params);
   }
 
+  @ApiOperation({ summary: 'Get customer by id' })
   @Get(':id')
   getOne(@Param('id', ParseIntPipe) id: number) {
     return this.customersService.findOne(id);
   }
 
+  @ApiOperation({ summary: 'Create a new customer' })
   @Post()
   create(@Body() payload: CreateCustomerDto) {
     return this.customersService.create(payload);
   }
 
+  @ApiOperation({ summary: 'Update customer' })
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -45,6 +50,7 @@ export class CustomersController {
     return this.customersService.update(id, payload);
   }
 
+  @ApiOperation({ summary: 'Delete customer' })
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.customersService.delete(id);

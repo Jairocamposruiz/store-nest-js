@@ -4,10 +4,14 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindConditions, FindManyOptions, Repository } from 'typeorm';
 
 import { Category } from '../entities/category.entity';
-import { CreateCategoryDto, UpdateCategoryDto } from '../dtos/categories.dtos';
+import {
+  CreateCategoryDto,
+  UpdateCategoryDto,
+  FilterCategoryDto,
+} from '../dtos/categories.dtos';
 
 @Injectable()
 export class CategoriesService {
@@ -16,8 +20,21 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async findAll() {
-    return await this.categoryRepository.find();
+  async findAll(params?: FilterCategoryDto) {
+    const { limit, offset, orderBy, order } = params;
+    const findOptions: FindManyOptions<Category> = {};
+    const where: FindConditions<Category> = {};
+
+    if (orderBy && order) {
+      findOptions.order = { [orderBy]: order };
+    } else if (order) {
+      findOptions.order = { id: order };
+    }
+    findOptions.where = where;
+    findOptions.skip = offset;
+    findOptions.take = limit;
+
+    return await this.categoryRepository.find(findOptions);
   }
 
   async findOne(id: number) {

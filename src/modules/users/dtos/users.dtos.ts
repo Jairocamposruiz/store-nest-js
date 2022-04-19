@@ -3,9 +3,10 @@ import {
   IsNotEmpty,
   IsEmail,
   IsPositive,
-  IsOptional,
+  IsOptional, IsEnum,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
+import { BaseFilterDto } from '../../common/dtos/base.filter.dto';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -30,3 +31,12 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
+
+export class FilterUserDto extends BaseFilterDto {
+  @ApiProperty({ enum: ['role', 'id'] })
+  @IsOptional()
+  @IsEnum(['role', 'id'])
+  readonly orderBy: string;
+}
+
+export class FilterOrdersByUserDto extends BaseFilterDto {}

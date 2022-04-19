@@ -1,5 +1,7 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+
+import { BaseFilterDto } from '../../common/dtos/base.filter.dto';
 
 export class CreateCategoryDto {
   @ApiProperty()
@@ -9,3 +11,10 @@ export class CreateCategoryDto {
 }
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {}
+
+export class FilterCategoryDto extends BaseFilterDto {
+  @ApiProperty({ enum: ['name', 'id'] })
+  @IsOptional()
+  @IsEnum(['name', 'id'])
+  readonly orderBy: string;
+}

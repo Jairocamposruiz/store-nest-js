@@ -1,5 +1,7 @@
-import { IsNumber, IsNotEmpty, IsPositive } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsPositive, IsOptional } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
+
+import { BaseFilterDto } from '../../common/dtos/base.filter.dto';
 
 export class CreateOrderItemDto {
   @ApiProperty()
@@ -22,3 +24,10 @@ export class CreateOrderItemDto {
 }
 
 export class UpdateOrderItemDto extends PartialType(CreateOrderItemDto) {}
+
+export class FilterOrderItemDto extends BaseFilterDto {
+  @ApiProperty()
+  @IsOptional()
+  @IsNumber()
+  readonly orderId: number;
+}

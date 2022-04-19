@@ -70,14 +70,9 @@ export class FilterProductsDto extends BaseFilterDto {
   readonly maxPrice: number;
 
   @ApiProperty({ enum: ['price', 'id'] })
-  @ValidateIf((item) => item.order)
+  @IsOptional()
   @IsEnum(['price', 'id'])
   readonly orderBy: string;
-
-  @ApiProperty({ enum: ['ASC', 'DESC'] })
-  @ValidateIf((item) => item.orderBy)
-  @IsEnum(['ASC', 'DESC'])
-  readonly order: string;
 
   @ApiProperty()
   @IsOptional()

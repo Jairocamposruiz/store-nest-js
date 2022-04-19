@@ -37,8 +37,8 @@ export class ProductsService {
     const { limit, offset, maxPrice, minPrice, orderBy, order, brandId } =
       params;
     const findOptions: FindManyOptions<Product> = {};
-
     const where: FindConditions<Product> = {};
+
     if (minPrice && maxPrice) {
       where.price = Between(minPrice, maxPrice);
     } else if (minPrice) {
@@ -48,11 +48,14 @@ export class ProductsService {
     }
 
     if (brandId) where.brand = { id: brandId };
-    if (orderBy && order) findOptions.order = { [orderBy]: order };
+    if (orderBy && order) {
+      findOptions.order = { [orderBy]: order };
+    } else if (order) {
+      findOptions.order = { id: order };
+    }
     findOptions.where = where;
     findOptions.skip = offset;
     findOptions.take = limit;
-    findOptions.relations = ['brand', 'categories'];
 
     return await this.productRepository.find(findOptions);
   }

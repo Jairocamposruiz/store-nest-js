@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindConditions, FindManyOptions, Repository } from 'typeorm';
 
 import { Customer } from '../entities/customer.entity';
-import { CreateCustomerDto, UpdateCustomerDto } from '../dtos/customers.dtos';
+import { CreateCustomerDto, UpdateCustomerDto, FilterCustomerDto } from '../dtos/customers.dtos';
 
 @Injectable()
 export class CustomersService {
@@ -12,8 +12,20 @@ export class CustomersService {
     private readonly customerRepository: Repository<Customer>,
   ) {}
 
-  async findAll() {
-    return await this.customerRepository.find();
+  async findAll(params?: FilterCustomerDto) {
+    const { limit, offset, order, orderBy } = params;
+    const findOptions: FindManyOptions<Customer> = {};
+    const where: FindConditions<Customer> = {};
+
+    if (orderBy && order) {
+      findOptions.order = { [orderBy]: order };
+    } else if (order) {
+      findOptions.order = { id: order };
+    }
+    findOptions.where = where;
+    findOptions.skip = offset;
+    findOptions.take = limit;
+    return await this.customerRepository.find(findOptions);
   }
 
   async findOne(id: number) {

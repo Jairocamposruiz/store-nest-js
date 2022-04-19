@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindConditions, FindManyOptions, Repository } from 'typeorm';
 
 import {
   CreateOrderItemDto,
   UpdateOrderItemDto,
+  FilterOrderItemDto,
 } from '../dtos/order-item.dtos';
 import { OrderItem } from '../entities/order-item.entity';
 import { Order } from '../entities/order.entity';
@@ -20,6 +21,30 @@ export class OrderItemsService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
   ) {}
+
+  async findAll(params?: FilterOrderItemDto) {
+    const { limit, offset, order, orderId } = params;
+    const findOptions: FindManyOptions<OrderItem> = {};
+    const where: FindConditions<OrderItem> = {};
+
+    if (orderId) where.order = { id: orderId };
+    if (order) findOptions.order = { id: order };
+    findOptions.where = where;
+    findOptions.skip = offset;
+    findOptions.take = limit;
+
+    return this.orderItemRepository.find(findOptions);
+  }
+
+  async findOne(id: number) {
+    const orderItem = await this.orderItemRepository.findOne(id, {
+      relations: ['order', 'product'],
+    });
+    if (!orderItem) {
+      throw new NotFoundException(`OrderItem with ID "${id}" not found`);
+    }
+    return orderItem;
+  }
 
   async create(payload: CreateOrderItemDto) {
     const order = await this.orderRepository.findOne(payload.orderId);
@@ -39,5 +64,40 @@ export class OrderItemsService {
     return await this.orderItemRepository.save(orderItem);
   }
 
-  //TODO: Implement more methods
+  async update(id: number, payload: UpdateOrderItemDto) {
+    const orderItem = await this.orderItemRepository.findOne(id, {
+      relations: ['order', 'product'],
+    });
+    if (!orderItem) {
+      throw new NotFoundException(`OrderItem with ID "${id}" not found`);
+    }
+    if (payload.orderId) {
+      const order = await this.orderRepository.findOne(payload.orderId);
+      if (!order) {
+        throw new NotFoundException(
+          `Order with id ${payload.orderId} not found`,
+        );
+      }
+      orderItem.order = order;
+    }
+    if (payload.productId) {
+      const product = await this.productRepository.findOne(payload.productId);
+      if (!product) {
+        throw new NotFoundException(
+          `Product with id ${payload.productId} not found`,
+        );
+      }
+      orderItem.product = product;
+    }
+    if (payload.quantity) orderItem.quantity = payload.quantity;
+    return await this.orderItemRepository.save(orderItem);
+  }
+
+  async delete(id: number) {
+    const orderItem = await this.orderItemRepository.findOne(id);
+    if (!orderItem) {
+      throw new NotFoundException(`OrderItem with ID "${id}" not found`);
+    }
+    return await this.orderItemRepository.remove(orderItem);
+  }
 }

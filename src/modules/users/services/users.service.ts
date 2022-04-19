@@ -4,24 +4,45 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindConditions, FindManyOptions, Repository } from 'typeorm';
 
 import { User } from '../entities/user.entity';
-import { CreateUserDto, UpdateUserDto } from '../dtos/users.dtos';
-import { CustomersService } from './customers.service';
+import { Customer } from '../entities/customer.entity';
+import { Order } from '../entities/order.entity';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  FilterUserDto,
+  FilterOrdersByUserDto,
+} from '../dtos/users.dtos';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly customersService: CustomersService,
+    @InjectRepository(Customer)
+    private readonly customerRepository: Repository<Customer>,
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
   ) {}
 
-  async findAll() {
-    return await this.userRepository.find({
-      relations: ['customer'],
-    });
+  async findAll(params?: FilterUserDto) {
+    const { limit, offset, order, orderBy } = params;
+    const findOptions: FindManyOptions<User> = {};
+    const where: FindConditions<User> = {};
+
+    if (orderBy && order) {
+      findOptions.order = { [orderBy]: order };
+    } else if (order) {
+      findOptions.order = { id: order };
+    }
+    findOptions.where = where;
+    findOptions.skip = offset;
+    findOptions.take = limit;
+    findOptions.relations = ['customer'];
+
+    return await this.userRepository.find(findOptions);
   }
 
   async findOne(id: number) {
@@ -44,7 +65,9 @@ export class UsersService {
     const newUser = this.userRepository.create(payload);
 
     if (payload.customerId) {
-      const customer = await this.customersService.findOne(payload.customerId);
+      const customer = await this.customerRepository.findOne(
+        payload.customerId,
+      );
       if (!customer) {
         throw new NotFoundException(
           `Customer with ID "${payload.customerId}" not found`,
@@ -79,9 +102,24 @@ export class UsersService {
     return await this.userRepository.remove(user);
   }
 
-  async getOrdersByUser(id: number) {
-    //TODO: implement
-    return;
+  async getOrdersByUser(id: number, params: FilterOrdersByUserDto) {
+    const { limit, offset, order } = params;
+    const findOptions: FindManyOptions<Order> = {};
+    const where: FindConditions<Order> = {};
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
+
+    if (order) {
+      findOptions.order = { id: order };
+    }
+    findOptions.where = where;
+    findOptions.skip = offset;
+    findOptions.take = limit;
+    findOptions.relations = ['customer', 'orderItems', 'orderItems.product'];
+
+    return await this.orderRepository.find(findOptions);
   }
 
   private async existEmail(email: string) {

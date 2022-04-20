@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindConditions, FindManyOptions, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { User } from '../entities/user.entity';
 import { Customer } from '../entities/customer.entity';
@@ -61,16 +62,25 @@ export class UsersService {
         `User with email "${payload.email}" already exists`,
       );
     }
-
     const newUser = this.userRepository.create(payload);
+    const hashPassword = await bcrypt.hash(newUser.password, 10);
+    newUser.password = hashPassword;
 
     if (payload.customerId) {
       const customer = await this.customerRepository.findOne(
         payload.customerId,
+        {
+          relations: ['user'],
+        },
       );
       if (!customer) {
         throw new NotFoundException(
           `Customer with ID "${payload.customerId}" not found`,
+        );
+      }
+      if (customer.user) {
+        throw new BadRequestException(
+          `Customer with ID "${payload.customerId}" already has a user`,
         );
       }
       newUser.customer = customer;
@@ -120,6 +130,10 @@ export class UsersService {
     findOptions.relations = ['customer', 'orderItems', 'orderItems.product'];
 
     return await this.orderRepository.find(findOptions);
+  }
+
+  async findByEmail(email: string) {
+    return await this.userRepository.findOne({ where: { email } });
   }
 
   private async existEmail(email: string) {

@@ -7,7 +7,6 @@ import {
   IsArray,
   ArrayMinSize,
   IsOptional,
-  ValidateIf,
   Min,
   IsEnum,
 } from 'class-validator';

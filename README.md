@@ -6,6 +6,10 @@
 
 Ejemplo de un RestServer con NestJS y TypeScript más info sobre proyectos en [JCodeR.es](https://blog.jcoder.es).
 
+Este proyecto es una RestServer para una tienda online cuenta con prácticamente todas las funcionalidades necesarias,
+tiene implementada autenticación con JWT, sistema de roles y permisos para los endpoints, Un ORM para conectarse a cualquier
+base de datos relacional de nuestra preferencia, sistema de migraciones para la base de datos y muchas features más.
+
 ## Instalación
 
 ```bash
@@ -100,8 +104,14 @@ $ npm run migrations:show
 $ npm run migrations:drop
 ```
 
+## Autenticación y autorización
+
+Esta Api cuenta con un sistema de autenticación y autorización para que los usuarios puedan acceder a los endpoints,
+se gestiona todo mediante JWT y un sistema de roles. También cuenta con encriptación de contraseñas, para proteger,
+en caso de algún ataque a la base de datos.
+
 ## Datos sobre el autor
 
 - Autor - Jairo Campos Ruiz
 - Website - [JCodeR.es](https://jcoder.es)
-- Blog - [Blog.JCodeR.es](https://blog.jcoder.es)
+- Blog - [blog.JCodeR.es](https://blog.jcoder.es)

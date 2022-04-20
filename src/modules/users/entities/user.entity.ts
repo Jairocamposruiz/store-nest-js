@@ -2,6 +2,7 @@ import { Exclude } from 'class-transformer';
 import { Column, Entity, OneToOne, JoinColumn, Index } from 'typeorm';
 
 import { BaseEntity } from '../../common/entities/base.entity';
+import { Role } from '../../auth/models/role.model';
 import { Customer } from './customer.entity';
 
 @Entity({ name: 'users' })
@@ -15,7 +16,7 @@ export class User extends BaseEntity {
   password: string;
 
   @Column({ type: 'varchar', length: 10 })
-  role: string;
+  role: Role;
 
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   @JoinColumn({ name: 'customer_id' })

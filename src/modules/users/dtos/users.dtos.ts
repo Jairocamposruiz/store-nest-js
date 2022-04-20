@@ -3,10 +3,13 @@ import {
   IsNotEmpty,
   IsEmail,
   IsPositive,
-  IsOptional, IsEnum,
+  IsOptional,
+  IsEnum,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
+
 import { BaseFilterDto } from '../../common/dtos/base.filter.dto';
+import { Role } from '../../auth/models/role.model';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -19,10 +22,12 @@ export class CreateUserDto {
   @IsString()
   readonly password: string;
 
+  //TODO: Quitar este campo y poner por defecto el rol user
+  //TODO: Crear un nuevo servicio y un nuevo controlador para aumentar rol
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  readonly role: string;
+  @IsEnum(Role)
+  readonly role: Role;
 
   @ApiProperty()
   @IsOptional()

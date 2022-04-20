@@ -9,6 +9,7 @@ import {
 } from '../dtos/orders.dtos';
 import { Order } from '../entities/order.entity';
 import { Customer } from '../entities/customer.entity';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class OrdersService {
@@ -17,6 +18,8 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async findAll(params?: FilterOrderDto) {
@@ -79,5 +82,19 @@ export class OrdersService {
       throw new NotFoundException(`Order with ID "${id}" not found`);
     }
     return await this.orderRepository.remove(order);
+  }
+
+  async getOrdersByUserId(id: number) {
+    const user = await this.userRepository.findOne(id, {
+      relations: ['customer'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found`);
+    }
+    const orders = await this.orderRepository.find({
+      where: { customer: user.customer.id },
+      relations: ['orderItems', 'orderItems.product'],
+    });
+    return orders;
   }
 }

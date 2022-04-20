@@ -8,7 +8,7 @@ Ejemplo de un RestServer con NestJS y TypeScript más info sobre proyectos en [J
 
 Este proyecto es una RestServer para una tienda online cuenta con prácticamente todas las funcionalidades necesarias,
 tiene implementada autenticación con JWT, sistema de roles y permisos para los endpoints, Un ORM para conectarse a cualquier
-base de datos relacional de nuestra preferencia, sistema de migraciones para la base de datos y muchas features más.
+base de datos relacional de nuestra preferencia, sistema de migraciones para la base de datos, auto documentación y muchas features más.
 
 ## Instalación
 
@@ -82,6 +82,7 @@ para ello se deben añadir los siguientes parámetros:
 ```
     synchronize: true,
 ```
+
 No se recomienda activar las migraciones automáticas en producción, ya que puede generar errores de integridad de datos.
 Aunque es muy útil en desarrollo si estamos modificando continuamente nuestras entidades.
 
@@ -109,6 +110,24 @@ $ npm run migrations:drop
 Esta Api cuenta con un sistema de autenticación y autorización para que los usuarios puedan acceder a los endpoints,
 se gestiona todo mediante JWT y un sistema de roles. También cuenta con encriptación de contraseñas, para proteger,
 en caso de algún ataque a la base de datos.
+
+## Validación de datos
+
+Todos los endpoints de la Api tienen una validación de datos, para ello se utilizan DTOs los cuales se validan mediante
+class-validator.
+
+## Protección de la API
+
+Para proteger de ataques cuenta además cuenta con la librería helmet, que nos permite añadir ciertas características,
+que ayudan a la protección de la API.
+
+La API tiene cors abiertos a peticiones desde cualquier origen, en caso de lanzar a producción se deberá añadir una
+política de cors más estricta, esta se puede modificar en el archivo **src/main.ts**.
+
+## Documentación
+
+Esta app cuenta con auto documentación mediante swagger, la documentación se puede ver en la ruta **/docs**.
+En ella podrás ver todos los endpoints disponibles, sus parámetros, tipos de datos, etc.
 
 ## Datos sobre el autor
 

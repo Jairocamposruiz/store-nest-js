@@ -10,17 +10,25 @@ import config from '../../../config';
     TypeOrmModule.forRootAsync({
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {
-        const { host, port, user, password, database } = configService.database;
-        return {
-          type: 'postgres',
-          host,
-          port,
-          username: user,
-          password,
-          database,
-          synchronize: false, //TODO: false in production
-          autoLoadEntities: true,
-        };
+        const { database } = configService;
+        if (database.ssl) {
+          return {
+            type: 'postgres',
+            url: database.url,
+            synchronize: false, //TODO: false in production
+            autoLoadEntities: true,
+            ssl: {
+              rejectUnauthorized: true,
+            },
+          };
+        } else {
+          return {
+            type: 'postgres',
+            url: database.url,
+            synchronize: false, //TODO: false in production
+            autoLoadEntities: true,
+          };
+        }
       },
     }),
   ],

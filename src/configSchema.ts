@@ -3,13 +3,10 @@ import * as Joi from 'joi';
 export const configSchema = Joi.object({
   //App
   PORT: Joi.number().required(),
-  API_KEY: Joi.string().required(),
+  SECRET_JWT: Joi.string().required(),
   //Database
-  DATABASE_USER: Joi.string().required(),
-  DATABASE_PASSWORD: Joi.string().required(),
-  DATABASE_NAME: Joi.string().required(),
-  DATABASE_HOST: Joi.string().required(),
-  DATABASE_PORT: Joi.number().required(),
+  DATABASE_URL: Joi.string().required(),
+  DATABASE_SSL: Joi.boolean().required(),
   //TypeORM
   TYPEORM_CONNECTION: Joi.string().required(),
   TYPEORM_HOST: Joi.string().required(),

@@ -19,7 +19,7 @@ import config from '../../../config';
             synchronize: false, //TODO: false in production
             autoLoadEntities: true,
             ssl: {
-              rejectUnauthorized: true,
+              rejectUnauthorized: false,
             },
           };
         } else {

@@ -10,6 +10,7 @@ export default registerAs('config', () => {
       url: process.env.DATABASE_URL,
       ssl: process.env.DATABASE_SSL === 'true',
       login: process.env.DATABASE_LOGGING === 'true',
+      entities: process.env.DATABASE_ENTITIES,
     },
   };
 });

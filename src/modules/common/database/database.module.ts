@@ -15,6 +15,7 @@ import config from '../../../config';
           return {
             type: 'postgres',
             url: database.url,
+            entities: [database.entities],
             synchronize: false, //TODO: false in production
             autoLoadEntities: true,
             ssl: {

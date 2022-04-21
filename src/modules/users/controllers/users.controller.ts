@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Request } from 'express';
+import { Public } from '../../auth/decorators/public.decorator';
 import { PayloadToken } from '../../auth/models/token.model';
 
 import { UsersService } from '../services/users.service';
@@ -26,7 +27,6 @@ import {
 } from '../dtos/users.dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/models/role.model';
 
@@ -69,8 +69,9 @@ export class UsersController {
     return this.usersService.getOrdersByUser(id, params);
   }
 
+  //TODO: Añadir confirmación por email
   @ApiOperation({ summary: 'Create my user' })
-  @Roles(Role.CUSTOMER, Role.ADMIN, Role.SUPER_ADMIN)
+  @Public()
   @Post('my-user')
   createMyUser(@Body() user: CreateMyUserDto) {
     return this.usersService.create({ ...user, role: Role.CUSTOMER });

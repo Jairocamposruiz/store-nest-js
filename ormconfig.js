@@ -9,4 +9,7 @@ module.exports = {
   cli: {
     migrationsDir: 'src/modules/common/database/migrations',
   },
+  ssl: {
+    rejectUnauthorized: false,
+  },
 };

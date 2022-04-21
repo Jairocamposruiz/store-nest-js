@@ -142,10 +142,9 @@ política de cors más estricta, esta se puede modificar en el archivo **src/mai
 Esta app cuenta con auto documentación mediante swagger, la documentación se puede ver en la ruta **/docs**.
 En ella podrás ver todos los endpoints disponibles, sus parámetros, tipos de datos, etc.
 
-También puedes ver la documentación en [MyApiDocs](https://store-nestjs-jcoder.herokuapp.com/)
+También puedes ver la documentación en [MyApiDocs](https://store-nestjs-jcoder.herokuapp.com/docs)
 
 ## Datos sobre el autor
 
 - Autor - Jairo Campos Ruiz
-- Website - [JCodeR.es](https://jcoder.es)
-- Blog - [blog.JCodeR.es](https://blog.jcoder.es)
+- Website - [JCodeR.es](https://blog.jcoder.es)

@@ -86,6 +86,9 @@ para ello se deben añadir los siguientes parámetros:
 No se recomienda activar las migraciones automáticas en producción, ya que puede generar errores de integridad de datos.
 Aunque es muy útil en desarrollo si estamos modificando continuamente nuestras entidades.
 
+Dentro del archivo **ormconfig.js** se encuentra la configuración de TypeORM para la base de datos que se está usando, y
+la configuración para las migraciones.
+
 ### Migraciones
 
 Este proyecto tiene implementado un sistema de migraciones para la base de datos, con los siguientes comandos podemos
@@ -103,6 +106,16 @@ $ npm run migrations:show
 
 # Borrar todos los datos de la base de datos ¡¡¡Peligroso!!!
 $ npm run migrations:drop
+```
+
+En caso de hacer desplegar en plataformas como Heroku donde no tienes acceso directo al servidor, estas plataformas suelen
+tener una forma de ejecutar comando dentro de la instancia en el caso de Heroku puedes ejecutar los scripts del package.json
+con el comando:
+
+```bash
+$ heroku run <comando de npm>
+# Ejemplo:
+$ heroku run npm run migrations:run
 ```
 
 ## Autenticación y autorización
@@ -128,6 +141,8 @@ política de cors más estricta, esta se puede modificar en el archivo **src/mai
 
 Esta app cuenta con auto documentación mediante swagger, la documentación se puede ver en la ruta **/docs**.
 En ella podrás ver todos los endpoints disponibles, sus parámetros, tipos de datos, etc.
+
+También puedes ver la documentación en [MyApiDocs](https://store-nestjs-jcoder.herokuapp.com/)
 
 ## Datos sobre el autor
 

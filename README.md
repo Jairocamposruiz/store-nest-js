@@ -115,7 +115,7 @@ con el comando:
 ```bash
 $ heroku run <comando de npm>
 # Ejemplo:
-$ heroku run npm run migrations:run
+$ heroku run npm run migrations:runprod
 ```
 
 ## Autenticación y autorización

@@ -1,28 +1,15 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Query,
-  Body,
-  ParseIntPipe,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-
-import { CustomersService } from '../services/customers.service';
-import {
-  CreateCustomerDto,
-  UpdateCustomerDto,
-  FilterCustomerDto,
-} from '../dtos/customers.dtos';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Role } from '../../auth/models/role.model';
+import { PayloadToken } from '../../auth/models/token.model';
+import { CreateCustomerDto, FilterCustomerDto, UpdateCustomerDto } from '../dtos/customers.dtos';
+
+import { CustomersService } from '../services/customers.service';
 
 @ApiTags('Customers')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -37,6 +24,15 @@ export class CustomersController {
     return this.customersService.findAll(params);
   }
 
+  @ApiOperation({ summary: 'Get my customer' })
+  @Roles(Role.CUSTOMER, Role.ADMIN, Role.SUPER_ADMIN)
+  @Get('my-customer')
+  getMyCustomer(@Req() req: Request) {
+    const payloadToken = req.user as PayloadToken;
+    const userId = payloadToken.sub;
+    return this.customersService.findByUserId(userId);
+  }
+
   @ApiOperation({ summary: 'Get customer by id' })
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @Get(':id')
@@ -49,6 +45,15 @@ export class CustomersController {
   @Post()
   create(@Body() payload: CreateCustomerDto) {
     return this.customersService.create(payload);
+  }
+
+  @ApiOperation({ summary: 'Update my customer' })
+  @Roles(Role.CUSTOMER, Role.ADMIN, Role.SUPER_ADMIN)
+  @Put('my-customer')
+  updateMyCustomer(@Body() payload: UpdateCustomerDto, @Req() req: Request) {
+    const payloadToken = req.user as PayloadToken;
+    const userId = payloadToken.sub;
+    return this.customersService.updateCustomerByUserId(userId, payload);
   }
 
   @ApiOperation({ summary: 'Update customer' })
@@ -67,6 +72,4 @@ export class CustomersController {
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.customersService.delete(id);
   }
-
-  //TODO: Edit my profile
 }

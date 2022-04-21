@@ -11,7 +11,7 @@ import { PartialType, ApiProperty } from '@nestjs/swagger';
 import { BaseFilterDto } from '../../common/dtos/base.filter.dto';
 import { Role } from '../../auth/models/role.model';
 
-export class CreateUserDto {
+export class CreateMyUserDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
@@ -22,17 +22,19 @@ export class CreateUserDto {
   @IsString()
   readonly password: string;
 
-  //TODO: Quitar este campo y poner por defecto el rol user
-  //TODO: Crear un nuevo servicio y un nuevo controlador para aumentar rol
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsEnum(Role)
-  readonly role: Role;
-
   @ApiProperty()
   @IsOptional()
   @IsPositive()
   readonly customerId?: number;
+}
+
+export class UpdateMyUserDto extends PartialType(CreateMyUserDto) {}
+
+export class CreateUserDto extends CreateMyUserDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEnum(Role)
+  readonly role: Role;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

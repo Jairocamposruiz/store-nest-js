@@ -3,7 +3,6 @@ import * as Joi from 'joi';
 export const configSchema = Joi.object({
   //App
   PORT: Joi.number().required(),
-  SECRET_JWT: Joi.string().required(),
   API_KEY: Joi.string().required(),
   //Database
   DATABASE_USER: Joi.string().required(),

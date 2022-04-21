@@ -4,7 +4,6 @@ export default registerAs('config', () => {
   return {
     app: {
       port: parseInt(process.env.PORT, 10),
-      apiKey: process.env.API_KEY,
       secretJwt: process.env.SECRET_JWT,
     },
     database: {

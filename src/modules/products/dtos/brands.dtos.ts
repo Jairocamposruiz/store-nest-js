@@ -27,5 +27,5 @@ export class FilterBrandDto extends BaseFilterDto {
   @ApiProperty({ enum: ['name', 'id'] })
   @IsOptional()
   @IsEnum(['name', 'id'])
-  readonly orderBy: string;
+  readonly orderBy?: string;
 }

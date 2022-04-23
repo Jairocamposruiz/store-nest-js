@@ -34,6 +34,8 @@ export class BrandsController {
   @Public()
   @Get()
   get(@Query() params: FilterBrandDto) {
+    console.log(params);
+    console.log('hola');
     return this.brandsService.findAll(params);
   }
 

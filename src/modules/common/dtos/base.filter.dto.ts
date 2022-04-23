@@ -5,15 +5,15 @@ export class BaseFilterDto {
   @ApiProperty()
   @IsOptional()
   @IsPositive()
-  readonly limit: number;
+  readonly limit?: number;
 
   @ApiProperty()
   @IsOptional()
   @Min(0)
-  readonly offset: number;
+  readonly offset?: number;
 
   @ApiProperty({ enum: ['ASC', 'DESC'] })
   @IsOptional()
   @IsEnum(['ASC', 'DESC'])
-  readonly order: 'ASC' | 'DESC';
+  readonly order?: 'ASC' | 'DESC';
 }

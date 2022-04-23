@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Public } from '../../auth/decorators/public.decorator';
@@ -7,7 +19,11 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Role } from '../../auth/models/role.model';
 import { PayloadToken } from '../../auth/models/token.model';
-import { CreateCustomerDto, FilterCustomerDto, UpdateCustomerDto } from '../dtos/customers.dtos';
+import {
+  CreateCustomerDto,
+  FilterCustomerDto,
+  UpdateCustomerDto,
+} from '../dtos/customers.dtos';
 
 import { CustomersService } from '../services/customers.service';
 
